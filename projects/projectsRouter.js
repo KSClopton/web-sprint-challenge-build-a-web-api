@@ -1,11 +1,9 @@
 const express = require('express');
 const projectHelper = require('../data/helpers/projectModel');
-const db = require('../data/dbConfig.js');
-// const mappers = require('./mappers');
 
 const router = express.Router();
 
-router.get('/:id', validateProjectID, (req, res) => {
+router.get('/allactions/:id', (req, res) => {
     // Get list of all actions
     const {id} = req.params
     projectHelper.getProjectActions(id)
@@ -16,7 +14,17 @@ router.get('/:id', validateProjectID, (req, res) => {
         res.status(500).json({message: "Could not connect"})
     })
 
-})
+}) // Checked!
+router.get('/', (req, res) => {
+    const projects = projectHelper.get()
+    .then(data => {
+        // console.log(projets, data)
+        res.status(200).json(data)
+    })
+    .catch(error => {
+        res.status(500).json({message: "Did not work"})
+    })
+}) // Checked!
 
 router.post('/', (req, res) => {
     // Post new project needs name and description
@@ -32,11 +40,15 @@ router.post('/', (req, res) => {
            res.status(500).json({message: "The Project was not added"})
        })
     }
-})
+}) // Checked!
 
-router.delete('/:id', validateProjectID, (req, res) => {
+router.delete('/:id', (req, res) => {
     // Delete project
     const {id} = req.params
+    const project = projectHelper.get(id)
+    if(!project){
+        res.status(404).json({message: "Project does not exist"})
+    }else{
     projectHelper.remove(id)
     .then(data => {
         res.status(200).json(data)
@@ -44,9 +56,10 @@ router.delete('/:id', validateProjectID, (req, res) => {
     .catch(error => {
         res.status(500).json({message: "The project could not be removed"})
     })
-})
+}
+}) // Checked!
 
-router.put('/:id', validateProjectID, (req, res) => {
+router.put('/:id', (req, res) => {
     // Update project needs name or description
     const {id} = req.params
     changes = req.body
@@ -61,17 +74,6 @@ router.put('/:id', validateProjectID, (req, res) => {
             res.status(500).json({message: "The project could not be updated"})
         })
     }
-})
+}) // Checked! 
 
-function validateProjectID(req, res, next) {
-    const {id} = req.params
-    actionHelper.get(id)
-    .then(data => {
-        data = req.actions
-        next();
-    })
-    .catch(error => {
-        res.status(500).json({message: "Invalid User ID"})
-    })
-}
 module.exports = router;

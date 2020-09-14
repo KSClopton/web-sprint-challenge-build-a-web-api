@@ -1,9 +1,5 @@
 const express = require('express');
-const db = require('../data/dbConfig.js');
-// const mappers = require('./mappers');
 const actionHelper = require('../data/helpers/actionModel');
-const projectHelper = require('../data/helpers/projectModel');
-// const { router } = require('../server.js');
 const router = express.Router();
 
 router.post('/', (req, res) => {
@@ -71,4 +67,4 @@ router.put('/:id', (req, res) => {
 })
 
 
-module.exports = express.Router();
+module.exports = router;
