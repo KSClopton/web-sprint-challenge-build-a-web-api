@@ -14,13 +14,13 @@ Go code!
 */
 
 const express = require('express');
-const useRouterActions = require('./actions/actionsRouter');
+const useRouter = require('./actions/actionsRouter');
 const useRouterProjects = require('./projects/projectsRouter');
 const server = require('./server');
 
 server.use(express.json());
-server.use("/api/actions", useRouterActions);
-server.use("api/projects", useRouterProjects);
+server.use("/api/actions", useRouter);
+server.use("/api/projects", useRouterProjects);
 
 const port = 5000;
 server.listen(port, () => {

@@ -1,7 +1,7 @@
 const express = require('express');
 const projectHelper = require('../data/helpers/projectModel');
-const db = require('../dbConfig.js');
-const mappers = require('./mappers');
+const db = require('../data/dbConfig.js');
+// const mappers = require('./mappers');
 
 const router = express.Router();
 
@@ -62,11 +62,12 @@ router.put('/:id', validateProjectID, (req, res) => {
         })
     }
 })
+
 function validateProjectID(req, res, next) {
     const {id} = req.params
     actionHelper.get(id)
     .then(data => {
-        const data = req.actions
+        data = req.actions
         next();
     })
     .catch(error => {
