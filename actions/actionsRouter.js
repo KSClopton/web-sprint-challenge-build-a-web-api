@@ -23,31 +23,52 @@ router.post('/', (req, res) => {
     
 })
 
-router.get('/:id', validateProjectID, (req, res) => {
+router.get('/:id', (req, res) => {
     // Get list of all actions
-    res.status(200).json(req.actions)
-
+    const {id} = req.params
+    actionHelper.get(id)
+    .then(data => {
+        res.status(200).json(data)
+    })
+    .catch(error => {
+        res.status(404).json({message: "That ID does not exist"})
+    })
 })
 
 router.delete('/:id', (req, res) => {
     // Delete an an action on a project
-    
-})
-
-router.put('/:id/', (req, res) => {
-    // Update an action
-})
-
-function validateProjectID(req, res, next) {
     const {id} = req.params
-    actionHelper.get(id)
-    .then(data => {
-        const data = req.actions
-        next();
+    const action = actionHelper.get(id)
+    if(!action){
+        res.status(404).json({message: "Could not find that action"})
+    }else{
+        actionHelper.remove(id)
+        .then(data => {
+        res.status(200).json({message: "The action has been nuked"})
     })
     .catch(error => {
-        res.status(500).json({message: "Invalid User ID"})
+        res.status(500).json({message: "There was a problem removing the user"})
     })
-}
+    }
+})
+
+router.put('/:id', (req, res) => {
+    // Update an action
+    const {id} = req.params
+    const changes = req.body
+
+    if(!changes.description && !changes.project_id){
+        res.status(404).json({message: "Please provide a description or a project_id to update"})
+    }else{
+        actionHelper.update(id, changes)
+        .then(data => {
+            res.status(200).json({message: "The action has been updated"})
+        })
+        .catch(error => {
+            res.status(500).json({message: "There was a problem updating the action"})
+        })
+    }
+})
+
 
 module.exports = express.Router();
