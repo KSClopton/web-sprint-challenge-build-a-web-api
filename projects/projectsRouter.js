@@ -34,12 +34,33 @@ router.post('/', (req, res) => {
     }
 })
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateProjectID, (req, res) => {
     // Delete project
+    const {id} = req.params
+    projectHelper.remove(id)
+    .then(data => {
+        res.status(200).json(data)
+    })
+    .catch(error => {
+        res.status(500).json({message: "The project could not be removed"})
+    })
 })
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateProjectID, (req, res) => {
     // Update project needs name or description
+    const {id} = req.params
+    changes = req.body
+    if(!changes.name && !changes.description){
+        res.status(404).json({message: "Please provide a name or description to udpate"})
+    }else{
+        projectHelper.update(id, changes)
+        .then(data => {
+            res.status(200).json(data)
+        })
+        .catch(error => {
+            res.status(500).json({message: "The project could not be updated"})
+        })
+    }
 })
 function validateProjectID(req, res, next) {
     const {id} = req.params
